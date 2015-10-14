@@ -125,6 +125,62 @@ au BufRead,BufNewFile *.ini      setlocal ft=dosini
 set ai!                      " 设置自动缩进
 set smartindent              " 智能自动缩进
 
+set scrolloff=5			 " 光标移动到buffer的顶部和底部时保持5行的距离
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""新文件标题
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"新建.c,.h,.sh,.java文件，自动插入文件头 
+autocmd BufNewFile *.cpp,*.[ch],*.sh,*.rb,*.java,*.py exec ":call SetTitle()" 
+""定义函数SetTitle，自动插入文件头 
+func SetTitle() 
+	"如果文件类型为.sh文件 
+	if expand("%:e") == 'sh'
+		call setline(1,"\#!/bin/bash") 
+		call append(line("."), "") 
+    elseif expand("%:e") == 'py'
+        call setline(1,"#!/usr/bin/env python3")
+        call append(line("."),"#-*- coding: utf-8 -*-")
+	    call append(line(".")+1, "") 
+
+    elseif expand("%:e") == 'rb'
+        call setline(1,"#!/usr/bin/env ruby")
+        call append(line("."),"# encoding: utf-8")
+	    call append(line(".")+1, "")
+
+"    elseif &filetype == 'mkd'
+"        call setline(1,"<head><meta charset=\"UTF-8\"></head>")
+	else 
+		call setline(1, "/*************************************************************************") 
+		call append(line("."), "	> File Name: ".expand("%")) 
+		call append(line(".")+1, "	> Author: Light.Zhang") 
+		call append(line(".")+2, "	> Mail: zhilight@gmail.com") 
+		call append(line(".")+3, "	> Created Time: ".strftime("%c")) 
+		call append(line(".")+4, " ************************************************************************/") 
+		call append(line(".")+5, "")
+	endif
+	if expand("%:e") == 'cpp'
+		call append(line(".")+6, "#include<iostream>")
+		call append(line(".")+7, "using namespace std;")
+		call append(line(".")+8, "")
+	endif
+	if &filetype == 'c'
+		call append(line(".")+6, "#include<stdio.h>")
+		call append(line(".")+7, "")
+	endif
+	if expand("%:e") == 'h'
+		call append(line(".")+6, "#ifndef _".toupper(expand("%:r"))."_H")
+		call append(line(".")+7, "#define _".toupper(expand("%:r"))."_H")
+		call append(line(".")+8, "#endif")
+	endif
+	if &filetype == 'java'
+		call append(line(".")+6,"public class ".expand("%:r"))
+		call append(line(".")+7,"")
+	endif
+	"新建文件后，自动定位到文件末尾
+endfunc 
+autocmd BufNewFile * normal G
+
 
 
 " 自定义编译器和编译参数
@@ -278,6 +334,36 @@ imap <leader>rr <esc>:call Compile_Run_Code()<cr>
 nmap <leader>rr :call Compile_Run_Code()<cr>
 vmap <leader>rr <esc>:call Compile_Run_Code()<cr>
 
+
+"代码格式优化化
+
+map <F6> :call FormartSrc()<CR><CR>
+
+"定义FormartSrc()
+func FormartSrc()
+    exec "w"
+    if &filetype == 'c'
+        exec "!astyle --style=ansi -a --suffix=none %"
+    elseif &filetype == 'cpp' || &filetype == 'hpp'
+        exec "r !astyle --style=ansi --one-line=keep-statements -a --suffix=none %> /dev/null 2>&1"
+    elseif &filetype == 'perl'
+        exec "!astyle --style=gnu --suffix=none %"
+    elseif &filetype == 'py'||&filetype == 'python'
+        exec "r !autopep8 -i --aggressive %"
+    elseif &filetype == 'java'
+        exec "!astyle --style=java --suffix=none %"
+    elseif &filetype == 'jsp'
+        exec "!astyle --style=gnu --suffix=none %"
+    elseif &filetype == 'xml'
+        exec "!astyle --style=gnu --suffix=none %"
+    else
+        exec "normal gg=G"
+        return
+    endif
+    exec "e! %"
+endfunc
+"结束定义FormartSrc
+
 " GitGutter           Git辅助插件
 let g:gitgutter_enabled               = 0      " 默认不开启
 let g:gitgutter_signs                 = 0      " 默认不开启提示
@@ -287,7 +373,19 @@ let g:gitgutter_sign_modified         = '>'    " 自定义修改指示符
 let g:gitgutter_sign_removed          = '-'    " 自定义删除指示符
 let g:gitgutter_sign_modified_removed = '->'   " 自定义既修改又删除指示符
 
+"当打开vim且没有文件时自动打开NERDTree
+autocmd vimenter * if !argc() | NERDTree | endif
+" 只剩 NERDTree时自动关闭
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
+" 设置当文件被改动时自动载入
+set autoread
+" quickfix模式
+autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
+"代码补全 
+set completeopt=preview,menu 
+"自动保存
+set autowrite
 " =============================================================================
 "                          << 以下为用户自定义配置 >>
 " =============================================================================
@@ -342,6 +440,11 @@ Bundle 'TxtBrowser'
 Bundle 'winmanager'
 Bundle 'ZoomWin'
 
+Bundle 'python-imports.vim'
+Bundle 'SQLComplete.vim'
+"dajngo
+Bundle 'django_templates.vim'
+Bundle 'Django-Projects'
 " -----------------------------------------------------------------------------
 "  < 编码配置 >
 " -----------------------------------------------------------------------------
