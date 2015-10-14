@@ -231,7 +231,7 @@ func! Compile_Run_Code()
     elseif &filetype == 'php'
         exec '!php %:t'
     elseif &filetype == 'python'
-        exec '!python3 %:t'
+        exec '!python %:t'
     elseif &filetype == 'ruby'
         exec '!ruby %:t'
     elseif &filetype == 'groovy'
@@ -277,6 +277,16 @@ endfunc
 imap <leader>rr <esc>:call Compile_Run_Code()<cr>
 nmap <leader>rr :call Compile_Run_Code()<cr>
 vmap <leader>rr <esc>:call Compile_Run_Code()<cr>
+
+" GitGutter           Git辅助插件
+let g:gitgutter_enabled               = 0      " 默认不开启
+let g:gitgutter_signs                 = 0      " 默认不开启提示
+let g:gitgutter_highlight_lines       = 0      " 默认不高亮行
+let g:gitgutter_sign_added            = '+'    " 自定义新增指示符
+let g:gitgutter_sign_modified         = '>'    " 自定义修改指示符
+let g:gitgutter_sign_removed          = '-'    " 自定义删除指示符
+let g:gitgutter_sign_modified_removed = '->'   " 自定义既修改又删除指示符
+
 
 " =============================================================================
 "                          << 以下为用户自定义配置 >>
