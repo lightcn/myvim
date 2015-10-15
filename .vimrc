@@ -140,22 +140,25 @@ func SetTitle()
 		call append(line("."), "") 
     elseif expand("%:e") == 'py'
         call setline(1,"#!/usr/bin/env python3")
-        call append(line("."),"#-*- coding: utf-8 -*-")
-	    call append(line(".")+1, "") 
-
+        call append(line("."),"# -*- coding: utf-8 -*-")
+		call append(line(".")+1, "#	> Author: Light.Zhang") 
+		call append(line(".")+2, "#	> Mail: zhilight@gmail.com") 
+		call append(line(".")+3, "#	> Created Time: ".strftime("%y/%m/%d %H:%M:%S")) 
+		call append(line(".")+1, "")
     elseif expand("%:e") == 'rb'
         call setline(1,"#!/usr/bin/env ruby")
         call append(line("."),"# encoding: utf-8")
+		call append(line(".")+1, "#	> Author: Light.Zhang") 
+		call append(line(".")+2, "#	> Mail: zhilight@gmail.com") 
+		call append(line(".")+3, "#	> Created Time: ".strftime("%y/%m/%d %H:%M:%S")) 
 	    call append(line(".")+1, "")
 
-"    elseif &filetype == 'mkd'
-"        call setline(1,"<head><meta charset=\"UTF-8\"></head>")
 	else 
 		call setline(1, "/*************************************************************************") 
 		call append(line("."), "	> File Name: ".expand("%")) 
 		call append(line(".")+1, "	> Author: Light.Zhang") 
 		call append(line(".")+2, "	> Mail: zhilight@gmail.com") 
-		call append(line(".")+3, "	> Created Time: ".strftime("%c")) 
+		call append(line(".")+3, "	> Created Time: ".strftime("%y/%m/%d %H:%M:%S")) 
 		call append(line(".")+4, " ************************************************************************/") 
 		call append(line(".")+5, "")
 	endif
@@ -879,7 +882,12 @@ set completeopt=menu                        "关闭预览窗口
 "  < powerline 插件配置 >
 " -----------------------------------------------------------------------------
 " 状态栏插件，更好的状态栏效果
-
+set guifont=PowerlineSymbols\ for\ Powerline
+set nocompatible
+set laststatus=2
+set t_Co=256
+let g:Powerline_symbols = 'fancy'
+let Powerline_symbols='compatible'
 " -----------------------------------------------------------------------------
 "  < repeat 插件配置 >
 " -----------------------------------------------------------------------------
@@ -1096,13 +1104,6 @@ au BufRead,BufNewFile,BufEnter * cd %:p:h
 " 指在常规模式下按"\"键加"t"键，这里不是同时按，而是先按"\"键后按"t"键，间隔在一
 " 秒内，而<Leader>cs是先按"\"键再按"c"又再按"s"键
 "
-"
-"
-"
-"
-"
-"
-
 
 " This is for pathogen
 " https://github.com/tpope/vim-pathogen
